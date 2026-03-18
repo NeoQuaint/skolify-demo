@@ -1,0 +1,2769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skolify - Payment</title>
+    <style>
+        /* ===== PAYMENT PAGE CSS (from PaymentPage.css) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+        }
+
+        /* Small Demo Badge */
+        .demo-badge {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: #1a1a1a;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0.8;
+            letter-spacing: 0.3px;
+            border: 1px solid #FFD700;
+        }
+
+        /* Fixed Header */
+        .payment-header.fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e8e8e8;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-image {
+            height: 40px;
+            width: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        /* Main Container */
+        .payment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 100px;
+            animation: contentFadeIn 0.5s ease 0.1s both;
+        }
+
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Discovery Message */
+        .discovery-message {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .university-count-title {
+            font-size: 30px;
+            font-weight: 650;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .university-count-blue {
+            color: #007bff;
+        }
+
+        .main-heading {
+            font-size: 26px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+
+        /* Usage Limits */
+        .usage-limits-simple {
+            display: flex;
+            gap: 30px;
+            margin: 15px 0 25px 0;
+            justify-content: center;
+        }
+
+        .limit-item-simple {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .limit-label-simple {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .limit-value-simple {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .limit-value-simple.exceeded {
+            color: #dc3545;
+        }
+
+        /* Section Subtitle */
+        .section-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* University Groups */
+        .university-groups-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .university-group-card {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #edf2f7;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .group-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5568;
+            letter-spacing: 0.2px;
+        }
+
+        .group-count {
+            font-size: 12px;
+            font-weight: 500;
+            color: #718096;
+            background: #f7fafc;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .university-group-card .universities-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+
+        .university-group-card .university-card {
+            width: calc(23% - 5px);
+            min-width: 100px;
+            height: 130px;
+            padding: 12px 8px;
+            flex: 0 0 auto;
+        }
+
+        .university-group-card .university-logo-container {
+            width: 40px;
+            height: 40px;
+        }
+
+        .university-group-card .university-name {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .university-group-card .courses-limit-badge,
+        .university-group-card .courses-selected-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+
+        /* University Card */
+        .university-card {
+            width: 140px;
+            height: 160px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .university-card:hover {
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .university-card.selected {
+            border-color: #10b981;
+            background: #f0fdf9;
+        }
+
+        .university-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .university-logo-container {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .university-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .university-logo-fallback {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .university-logo-fallback svg {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .university-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .university-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .courses-selected-badge {
+            font-size: 11px;
+            color: #10b981;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #f0fdf9;
+            border: 1px solid #10b981;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .courses-limit-badge {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .selected-check {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #10b981;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #10b981;
+            transition: all 0.2s ease;
+        }
+
+        .selected-check:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        /* Selected Universities */
+        .selected-universities-minimal {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .minimal-header {
+            margin-bottom: 20px;
+        }
+
+        .minimal-header h2 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+
+        .minimal-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .minimal-selections {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .minimal-university {
+            padding: 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .minimal-university:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .minimal-university-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .minimal-university-logo {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+
+        .minimal-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .minimal-logo-fallback {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+            border-radius: 4px;
+        }
+
+        .minimal-university-info {
+            flex: 1;
+        }
+
+        .minimal-university-info h3 {
+            font-size: 14px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .minimal-courses-count {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .minimal-edit-btn {
+            background: none;
+            border: 1px solid #007bff;
+            color: #007bff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .minimal-edit-btn:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .minimal-remove-btn {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .minimal-remove-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .accommodations-list {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .accommodation-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .accommodation-item:last-child {
+            border-bottom: none;
+        }
+
+        .accommodation-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .accommodation-icon {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .accommodation-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .accommodation-location {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .accommodation-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: #28a745;
+            margin: 0 10px;
+        }
+
+        .remove-accommodation-btn {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-accommodation-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .no-selections-minimal {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .no-selections-icon {
+            font-size: 32px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        /* Package Section */
+        .package-section {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.08);
+        }
+
+        .package-section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .packages-inline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .package-inline {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .package-inline:hover {
+            border-color: #007bff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+        }
+
+        .package-inline.selected {
+            border-color: #007bff;
+            background: rgba(0, 123, 255, 0.03);
+            box-shadow: 0 6px 18px rgba(0, 123, 255, 0.12);
+        }
+
+        .package-inline-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+        }
+
+        .package-inline-header h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .package-price-inline {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #007bff 0%, #00d4aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .package-features-inline {
+            flex: 1;
+        }
+
+        .feature-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 123, 255, 0.05);
+        }
+
+        .feature-inline:last-child {
+            border-bottom: none;
+        }
+
+        .feature-count-inline {
+            width: 28px;
+            height: 28px;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .feature-label-inline {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .accent-feature .feature-label-inline {
+            color: #007bff;
+            font-weight: 700;
+        }
+
+        .custom-options-inline {
+            margin-top: 10px;
+        }
+
+        .custom-option-row-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+            font-size: 13px;
+        }
+
+        .custom-option-row-inline:last-child {
+            border-bottom: none;
+        }
+
+        .custom-price-inline {
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        .custom-counter-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .counter-btn-inline {
+            width: 28px;
+            height: 28px;
+            background: #007bff;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .counter-btn-inline:hover {
+            background: #0056b3;
+            transform: scale(1.1);
+        }
+
+        .counter-value-inline {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .price-per-item-inline {
+            font-size: 11px;
+            color: #007bff;
+            margin-left: 8px;
+            font-weight: 700;
+        }
+
+        .custom-total-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0 0 0;
+            margin-top: 12px;
+            border-top: 2px solid rgba(0, 123, 255, 0.2);
+            font-weight: 700;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .total-amount-inline {
+            font-size: 18px;
+            color: #007bff;
+            font-weight: 800;
+        }
+
+        .accent-total {
+            color: #007bff;
+        }
+
+        .custom-features-inline {
+            margin-top: 10px;
+        }
+
+        .custom-note-inline {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(0, 123, 255, 0.2);
+            text-align: center;
+        }
+
+        .custom-note-inline small {
+            color: #007bff;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Apply Section */
+        .apply-section {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .application-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .summary-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .package-name {
+            color: #007bff;
+        }
+
+        .total-cost {
+            color: #28a745;
+            font-size: 18px;
+        }
+
+        .apply-now-btn {
+            padding: 14px 40px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            min-width: 200px;
+            max-width: 300px;
+            align-self: center;
+        }
+
+        .apply-now-btn:hover:not(:disabled) {
+            background: #0056b3;
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.4) !important;
+        }
+
+        .apply-now-btn:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.98) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .apply-now-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Maximise Options Banner */
+        .maximise-options-banner {
+            background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%);
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        .maximise-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+
+        .maximise-icon {
+            font-size: 2.2rem;
+            opacity: 0.9;
+            animation: pulse 2s infinite;
+        }
+
+        .maximise-text {
+            flex: 1;
+        }
+
+        .maximise-text h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .maximise-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .maximise-btn {
+            background: white;
+            color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .maximise-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+            background: #f0f8ff;
+        }
+
+        .maximise-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .spinner-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New Order Banner */
+        .new-order-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+        }
+
+        .new-order-icon {
+            font-size: 1.8rem;
+            opacity: 0.9;
+        }
+
+        .new-order-text {
+            flex: 1;
+        }
+
+        .new-order-text h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+        }
+
+        .new-order-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .view-previous-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-previous-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-icon-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e8e8e8;
+            border-radius: 30px;
+            color: #007bff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-icon-btn:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .packages-inline {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .university-count-title {
+                font-size: 32px;
+            }
+            
+            .main-heading {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .university-groups-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .university-group-card .university-card {
+                width: calc(33.333% - 7px);
+            }
+            
+            .packages-inline {
+                grid-template-columns: 1fr;
+            }
+            
+            .university-count-title {
+                font-size: 28px;
+            }
+            
+            .main-heading {
+                font-size: 20px;
+            }
+            
+            .maximise-banner-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .maximise-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .university-group-card .university-card {
+                width: calc(50% - 5px);
+            }
+            
+            .university-count-title {
+                font-size: 24px;
+            }
+            
+            .main-heading {
+                font-size: 18px;
+            }
+            
+            .apply-now-btn {
+                padding: 12px 30px;
+                min-width: 180px;
+            }
+            
+            .discovery-message {
+                padding: 20px 15px;
+            }
+            
+            .university-card {
+                width: calc(50% - 10px);
+                height: 150px;
+            }
+            
+            .minimal-university-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .minimal-edit-btn {
+                align-self: flex-start;
+                margin-top: 8px;
+            }
+        }
+
+        /* ===== MONEY.CSS (Full Money Component Styles) ===== */
+        .money-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: moneyFadeIn 0.2s ease;
+            padding: 15px;
+        }
+
+        @keyframes moneyFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .money-container {
+            background: white;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            animation: moneySlideUp 0.3s ease;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .money-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes moneySlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .money-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #f0f0f0;
+            border: none;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .money-close:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .money-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-right: 25px;
+        }
+
+        .money-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .money-header p {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .money-error {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 10px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .money-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .money-section-card {
+            background: #f8f9fa;
+            border-radius: 24px;
+            padding: 18px;
+            border: 1px solid #e8e8e8;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .section-number {
+            width: 24px;
+            height: 24px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .section-title h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .money-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .money-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .money-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .money-group label svg {
+            color: #007bff;
+            font-size: 12px;
+        }
+
+        .money-group input,
+        .money-group .money-select {
+            padding: 10px 12px;
+            border: 2px solid #e8e8e8;
+            border-radius: 18px;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .money-group input:focus,
+        .money-group .money-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .money-group input::placeholder {
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        .money-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .money-row .money-group {
+            flex: 1;
+            min-width: 0;
+            margin-bottom: 0;
+        }
+
+        .money-row .money-group input {
+            width: 100%;
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        .card-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .card-input-wrapper input {
+            width: 100%;
+            padding-right: 60px;
+            box-sizing: border-box;
+        }
+
+        .card-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #007bff;
+            font-weight: 700;
+            font-size: 11px;
+            background: #f0f7ff;
+            padding: 4px 8px;
+            border-radius: 20px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .money-methods {
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .money-method {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .money-method.active {
+            border-color: #007bff;
+            background: #f0f7ff;
+            color: #007bff;
+        }
+
+        .money-method:hover {
+            border-color: #007bff;
+        }
+
+        .money-method svg {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .document-upload-item {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 20px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .document-upload-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .document-upload-item:hover {
+            border-color: #007bff;
+        }
+
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .document-icon {
+            font-size: 18px;
+            color: #007bff;
+            background: #f0f7ff;
+            padding: 6px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .document-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .document-actions {
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #007bff;
+            color: white;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .upload-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0fff4;
+            border: 1px solid #28a745;
+            padding: 5px 10px;
+            border-radius: 30px;
+            color: #28a745;
+            white-space: nowrap;
+        }
+
+        .uploaded-icon {
+            color: #28a745;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .uploaded-file span {
+            font-size: 11px;
+            font-weight: 500;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .change-file-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
+        .change-file-btn:hover {
+            color: #007bff;
+        }
+
+        .field-error {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            border-left: 3px solid #dc3545;
+            animation: slideIn 0.3s ease;
+        }
+
+        .money-summary {
+            background: linear-gradient(135deg, #007bff 0%, #00d4aa 100%);
+            padding: 14px 18px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            color: white;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .money-summary span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .pay-now-btn {
+            padding: 10px 20px;
+            background: white;
+            color: #007bff;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            white-space: nowrap;
+        }
+
+        .pay-now-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .pay-now-btn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .secure-payment {
+            text-align: center;
+            font-size: 11px;
+            color: #28a745;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 6px;
+            background: #f0fff4;
+            border-radius: 30px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .welcome-back-banner {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideDown 0.5s ease;
+        }
+
+        .welcome-icon {
+            font-size: 32px;
+            color: #ffd700;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .welcome-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .welcome-greeting {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .welcome-message {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .loading-profile {
+            text-align: center;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            color: #007bff;
+            font-weight: 500;
+            animation: pulse 1.5s infinite;
+        }
+
+        .payment-method-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .payment-method-section h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .payment-method-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            color: #495057;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-method-btn:hover {
+            border-color: #adb5bd;
+            background: #f8f9fa;
+        }
+
+        .payment-method-btn.active {
+            border-color: #0d6efd;
+            background: #e7f1ff;
+            color: #0d6efd;
+        }
+
+        .payment-method-btn svg {
+            font-size: 1.2rem;
+        }
+
+        .ozow-section {
+            margin: 20px 0;
+        }
+
+        .ozow-launch-btn {
+            width: 100%;
+            padding: 16px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .ozow-launch-btn:hover:not(:disabled) {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .ozow-launch-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .saved-info-summary {
+            background: #f0f7ff;
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 2px solid #007bff;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary-check-icon {
+            color: #28a745;
+            font-size: 20px;
+        }
+
+        .summary-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .summary-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .summary-note {
+            font-size: 12px;
+            color: #666;
+            background: white;
+            padding: 10px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-note svg {
+            color: #007bff;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .money-container {
+                padding: 20px 15px;
+                max-width: 95%;
+            }
+            
+            .money-header h2 {
+                font-size: 18px;
+            }
+            
+            .money-row {
+                gap: 8px;
+            }
+            
+            .money-row .money-group input {
+                padding: 10px 5px;
+                font-size: 12px;
+            }
+            
+            .total-amount {
+                font-size: 18px;
+            }
+            
+            .pay-now-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+                min-width: 85px;
+            }
+            
+            .document-upload-item {
+                flex-wrap: wrap;
+            }
+            
+            .document-actions {
+                width: auto;
+            }
+            
+            .uploaded-file {
+                padding: 4px 8px;
+            }
+            
+            .uploaded-file span {
+                max-width: 60px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-page">
+        <!-- Small Demo Badge -->
+        <div class="demo-badge">⚡ DEMO MODE</div>
+
+        <!-- Fixed Header -->
+        <header class="payment-header fixed">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-image">🎓</div>
+                    <span class="logo-text">Skolify</span>
+                </div>
+                <div class="header-right">
+                    <button class="profile-icon-btn" onclick="window.location.href='profile.html'">
+                        👤 Profile
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="payment-container">
+            <!-- Maximise Options Banner -->
+            <div class="maximise-options-banner" id="maximiseBanner">
+                <div class="maximise-banner-content">
+                    <div class="maximise-icon">✨</div>
+                    <div class="maximise-text">
+                        <h3>You've selected 2 out of 6 universities</h3>
+                        <p>You have 4 slot(s) left. Add more universities to maximize your chances!</p>
+                    </div>
+                    <button class="maximise-btn" onclick="alert('✨ Finding more universities based on your marks...')">
+                        ✨ Find More Universities
+                    </button>
+                </div>
+            </div>
+
+            <!-- Discovery Message -->
+            <div class="discovery-message">
+                <h2 class="university-count-title">
+                    Skolify has found <span class="university-count-blue">12</span> Universities you can apply to
+                </h2>
+                <h1 class="main-heading">Select Your Universities & Courses</h1>
+            </div>
+
+            <!-- Usage Limits -->
+            <div class="usage-limits-simple">
+                <div class="limit-item-simple">
+                    <span class="limit-label-simple">Universities:</span>
+                    <span class="limit-value-simple">2 / 6</span>
+                </div>
+            </div>
+
+            <p class="section-subtitle">
+                Click on a university to select your courses (up to 3 per university). Only universities offering your selected courses are shown.
+            </p>
+
+            <!-- University Groups -->
+            <div class="university-groups-container">
+                <!-- No Application Fee Group -->
+                <div class="university-group-card">
+                    <div class="group-header">
+                        <span class="group-name">No Application Fee</span>
+                        <span class="group-count">6</span>
+                    </div>
+                    <div class="universities-grid">
+                        <div class="university-card selected" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓UCT</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">UCT</h3>
+                                <div class="courses-selected-badge">2 courses</div>
+                            </div>
+                            <div class="selected-check" onclick="event.stopPropagation(); this.parentElement.classList.remove('selected'); this.style.display='none'">×</div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓WITS</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">WITS</h3>
+                                <div class="courses-limit-badge">3 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓UP</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">UP</h3>
+                                <div class="courses-limit-badge">3 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓SU</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">SU</h3>
+                                <div class="courses-limit-badge">3 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓UJ</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">UJ</h3>
+                                <div class="courses-limit-badge">2 max</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Fee Required Group -->
+                <div class="university-group-card">
+                    <div class="group-header">
+                        <span class="group-name">Application Fee Required</span>
+                        <span class="group-count">6</span>
+                    </div>
+                    <div class="universities-grid">
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓TUT</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">TUT</h3>
+                                <div class="courses-limit-badge">5 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓DUT</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">DUT</h3>
+                                <div class="courses-limit-badge">4 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓CPUT</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">CPUT</h3>
+                                <div class="courses-limit-badge">4 max</div>
+                            </div>
+                        </div>
+
+                        <div class="university-card" onclick="openCoursesModal(this)">
+                            <div class="university-logo-container">
+                                <div class="university-logo-fallback" style="display: flex;">🎓NMU</div>
+                            </div>
+                            <div class="university-info">
+                                <h3 class="university-name">NMU</h3>
+                                <div class="courses-limit-badge">3 max</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selected Universities Minimal -->
+            <div class="selected-universities-minimal">
+                <div class="minimal-header">
+                    <h2>Your Selected Applications</h2>
+                    <p class="minimal-subtitle">Total: 2 courses across 1 university</p>
+                </div>
+                
+                <div class="minimal-selections">
+                    <div class="minimal-university">
+                        <div class="minimal-university-header">
+                            <div class="minimal-university-logo">
+                                <div class="minimal-logo-fallback" style="display: flex;">🎓</div>
+                            </div>
+                            <div class="minimal-university-info">
+                                <h3>UCT</h3>
+                                <span class="minimal-courses-count">2/3 courses selected</span>
+                            </div>
+                            <button class="minimal-edit-btn" onclick="openCoursesModal()">Edit</button>
+                            <button class="minimal-remove-btn" onclick="this.closest('.minimal-university').remove()">×</button>
+                        </div>
+                        <div class="accommodations-list">
+                            <div class="accommodation-item">
+                                <div class="accommodation-info">
+                                    <span class="accommodation-icon">🏠</span>
+                                    <div>
+                                        <div class="accommodation-name">BSc Computer Science</div>
+                                        <div class="accommodation-location">Faculty of Science</div>
+                                    </div>
+                                </div>
+                                <div class="accommodation-price">R80</div>
+                                <button class="remove-accommodation-btn" onclick="this.closest('.accommodation-item').remove()">×</button>
+                            </div>
+                            <div class="accommodation-item">
+                                <div class="accommodation-info">
+                                    <span class="accommodation-icon">🏠</span>
+                                    <div>
+                                        <div class="accommodation-name">BSc Mathematics</div>
+                                        <div class="accommodation-location">Faculty of Science</div>
+                                    </div>
+                                </div>
+                                <div class="accommodation-price">R80</div>
+                                <button class="remove-accommodation-btn" onclick="this.closest('.accommodation-item').remove()">×</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Package Section -->
+            <div class="package-section">
+                <h2 class="package-section-title">Choose Your Application Package</h2>
+                <div class="packages-inline">
+                    <div class="package-inline" onclick="selectPackage('basic', this)">
+                        <div class="package-inline-header">
+                            <h4>Basic</h4>
+                            <div class="package-price-inline">R169</div>
+                        </div>
+                        <div class="package-features-inline">
+                            <div class="feature-inline">
+                                <span class="feature-count-inline">2</span>
+                                <span class="feature-label-inline">University Applications</span>
+                            </div>
+                            <div class="feature-inline accent-feature">
+                                <span class="feature-label-inline">Standard Processing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="package-inline" onclick="selectPackage('standard', this)">
+                        <div class="package-inline-header">
+                            <h4>Standard</h4>
+                            <div class="package-price-inline">R329</div>
+                        </div>
+                        <div class="package-features-inline">
+                            <div class="feature-inline">
+                                <span class="feature-count-inline">4</span>
+                                <span class="feature-label-inline">University Applications</span>
+                            </div>
+                            <div class="feature-inline accent-feature">
+                                <span class="feature-label-inline">Faster Processing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="package-inline selected" onclick="selectPackage('premium', this)">
+                        <div class="package-inline-header">
+                            <h4>Premium</h4>
+                            <div class="package-price-inline">R499</div>
+                        </div>
+                        <div class="package-features-inline">
+                            <div class="feature-inline">
+                                <span class="feature-count-inline">6</span>
+                                <span class="feature-label-inline">University Applications</span>
+                            </div>
+                            <div class="feature-inline accent-feature">
+                                <span class="feature-label-inline">Priority Processing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="package-inline" onclick="selectPackage('custom', this)">
+                        <div class="package-inline-header">
+                            <h4>Custom</h4>
+                            <div class="package-price-inline">Build</div>
+                        </div>
+                        <div class="custom-features-inline">
+                            <div class="feature-inline">
+                                <span class="feature-label-inline">Build Your Own</span>
+                            </div>
+                            <div class="feature-inline">
+                                <span class="feature-label-inline">No University Limit</span>
+                            </div>
+                            <div class="feature-inline">
+                                <span class="feature-label-inline">R25 base + R80 per uni</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Apply Section -->
+            <div class="apply-section">
+                <div class="application-summary">
+                    <div class="summary-details">
+                        <div class="summary-item">
+                            <span class="summary-label">Package:</span>
+                            <span class="summary-value package-name" id="selectedPackageDisplay">Premium</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">Total Cost:</span>
+                            <span class="summary-value total-cost" id="totalCostDisplay">R499</span>
+                        </div>
+                    </div>
+
+                    <button class="apply-now-btn" onclick="openMoneyModal()">
+                        Apply Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Money Modal (Payment Form) -->
+    <div id="moneyModal" class="money-overlay" style="display: none;">
+        <div class="money-container">
+            <button class="money-close" onclick="closeMoneyModal()">✕</button>
+
+            <div class="money-header">
+                <h2>Complete Your Payment</h2>
+                <p>Please provide your details for your university applications</p>
+            </div>
+
+            <div id="moneyError" class="money-error" style="display: none;"></div>
+
+            <form id="paymentForm" class="money-form" onsubmit="handlePaymentSubmit(event)">
+                <!-- Personal Information Section -->
+                <div class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">1</span>
+                        <h3>Personal Information</h3>
+                    </div>
+                    
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>👤 First Name *</label>
+                            <input type="text" id="firstName" placeholder="John" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>Middle Name</label>
+                            <input type="text" id="middleName" placeholder="Michael (optional)">
+                        </div>
+                    </div>
+
+                    <div class="money-group">
+                        <label>👤 Last Name *</label>
+                        <input type="text" id="lastName" placeholder="Doe" required>
+                    </div>
+
+                    <div class="money-group">
+                        <label>🆔 ID / Passport Number *</label>
+                        <input type="text" id="idNumber" placeholder="000101 5084 089" required>
+                        <small class="field-note">This will be your password to access your profile</small>
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>Date of Birth *</label>
+                            <input type="date" id="dateOfBirth" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>Gender *</label>
+                            <select id="gender" class="money-select" required>
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>Nationality *</label>
+                            <input type="text" id="nationality" placeholder="South African" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>Home Language</label>
+                            <input type="text" id="homeLanguage" placeholder="English / IsiZulu etc.">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">2</span>
+                        <h3>Contact Information</h3>
+                    </div>
+                    
+                    <div class="money-group">
+                        <label>📧 Email Address *</label>
+                        <input type="email" id="email" placeholder="john.doe@example.com" required>
+                        <small class="field-note">We'll send application updates here</small>
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>📞 Phone Number *</label>
+                            <input type="tel" id="phoneNumber" placeholder="+27 11 123 4567" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>📱 WhatsApp Number *</label>
+                            <input type="tel" id="whatsappNumber" placeholder="+27 11 123 4567" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">3</span>
+                        <h3>Residential Address</h3>
+                    </div>
+                    
+                    <div class="money-group">
+                        <label>🏠 Street Address *</label>
+                        <input type="text" id="address" placeholder="123 Main Street" required>
+                    </div>
+
+                    <div class="money-group">
+                        <label>Suburb</label>
+                        <input type="text" id="suburb" placeholder="Sandton">
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>City *</label>
+                            <input type="text" id="city" placeholder="Johannesburg" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>Province *</label>
+                            <select id="province" class="money-select" required>
+                                <option value="">Select Province</option>
+                                <option value="Gauteng">Gauteng</option>
+                                <option value="Western Cape">Western Cape</option>
+                                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                                <option value="Eastern Cape">Eastern Cape</option>
+                                <option value="Free State">Free State</option>
+                                <option value="Limpopo">Limpopo</option>
+                                <option value="Mpumalanga">Mpumalanga</option>
+                                <option value="North West">North West</option>
+                                <option value="Northern Cape">Northern Cape</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="money-group">
+                        <label>Postal Code *</label>
+                        <input type="text" id="postalCode" placeholder="2000" required>
+                    </div>
+                </div>
+
+                <!-- Next of Kin Section -->
+                <div class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">4</span>
+                        <h3>Next of Kin / Emergency Contact</h3>
+                    </div>
+                    
+                    <div class="money-group">
+                        <label>👥 Full Name *</label>
+                        <input type="text" id="kinName" placeholder="Jane Doe" required>
+                    </div>
+
+                    <div class="money-group">
+                        <label>Relationship *</label>
+                        <input type="text" id="kinRelationship" placeholder="Mother / Father / Guardian" required>
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>📞 Phone Number *</label>
+                            <input type="tel" id="kinPhone" placeholder="+27 11 123 4567" required>
+                        </div>
+
+                        <div class="money-group">
+                            <label>📧 Email</label>
+                            <input type="email" id="kinEmail" placeholder="jane.doe@example.com">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">5</span>
+                        <h3>Required Documents</h3>
+                        <small class="section-hint">Max 5MB per file. PDF or images only.</small>
+                    </div>
+                    
+                    <div class="document-upload-item">
+                        <div class="document-info">
+                            <span class="document-icon">🆔</span>
+                            <div>
+                                <span class="document-name">ID Document / Passport</span>
+                                <small class="document-hint">Certified copy (PDF or Image)</small>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <label class="upload-btn" id="idUploadBtn">
+                                📤
+                                <input type="file" id="idFile" accept=".pdf,.jpg,.jpeg,.png" hidden onchange="handleFileUpload('id', this)">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="idError" class="field-error" style="display: none;"></div>
+
+                    <div class="document-upload-item">
+                        <div class="document-info">
+                            <span class="document-icon">🎓</span>
+                            <div>
+                                <span class="document-name">Matric / Grade 11 Results</span>
+                                <small class="document-hint">Latest academic results</small>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <label class="upload-btn" id="resultsUploadBtn">
+                                📤
+                                <input type="file" id="resultsFile" accept=".pdf,.jpg,.jpeg,.png" hidden onchange="handleFileUpload('results', this)">
+                            </label>
+                        </div>
+                    </div>
+                    <div id="resultsError" class="field-error" style="display: none;"></div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div class="payment-method-section">
+                    <h3>Select Payment Method</h3>
+                    <div class="payment-methods">
+                        <button type="button" class="payment-method-btn active" onclick="setPaymentMethod('credit', this)">
+                            💳 Credit Card
+                        </button>
+                        <button type="button" class="payment-method-btn" onclick="setPaymentMethod('ozow', this)">
+                            🏦 Ozow (Instant EFT)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Credit Card Fields (shown by default) -->
+                <div id="creditCardFields" class="money-section-card">
+                    <div class="section-title">
+                        <span class="section-number">6</span>
+                        <h3>Payment Details</h3>
+                    </div>
+
+                    <div class="money-group">
+                        <label>Card number</label>
+                        <div class="card-input-wrapper">
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                            <span class="card-icon">VISA</span>
+                        </div>
+                    </div>
+
+                    <div class="money-group">
+                        <label>Name on card</label>
+                        <input type="text" id="cardName" placeholder="JOHN DOE">
+                    </div>
+
+                    <div class="money-row">
+                        <div class="money-group">
+                            <label>Expiry</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                        </div>
+
+                        <div class="money-group">
+                            <label>CVC</label>
+                            <input type="text" id="cvc" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ozow Section (hidden by default) -->
+                <div id="ozowSection" class="ozow-section" style="display: none;">
+                    <button type="button" class="ozow-launch-btn" onclick="processOzowPayment()">
+                        🏦 Pay R<span id="ozowAmount">499</span> with Ozow
+                    </button>
+                </div>
+
+                <!-- Summary -->
+                <div class="money-summary">
+                    <div class="summary-left">
+                        <span>Total Amount:</span>
+                        <span class="total-amount">R<span id="modalTotalAmount">499</span></span>
+                    </div>
+                    <button type="submit" class="pay-now-btn" id="submitBtn">
+                        Submit & Pay
+                    </button>
+                </div>
+
+                <p class="secure-payment">
+                    🔒 All information is encrypted and secure
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal (shown after payment) -->
+    <div id="successModal" class="money-overlay" style="display: none;">
+        <div class="money-container" style="text-align: center; padding: 40px;">
+            <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+            <h2 style="margin-bottom: 15px;">Payment Successful!</h2>
+            <p style="color: #666; margin-bottom: 25px;">Your application has been submitted. You will receive a confirmation email shortly.</p>
+            <button class="pay-now-btn" onclick="closeSuccessModal()" style="background: #007bff; color: white; border: none;">Continue to Profile</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let selectedPackage = 'premium';
+        let totalAmount = 499;
+        let currentPaymentMethod = 'credit';
+        let uploadedFiles = {
+            id: { name: null, uploaded: false },
+            results: { name: null, uploaded: false }
+        };
+
+        // Update display
+        document.getElementById('selectedPackageDisplay').textContent = 'Premium';
+        document.getElementById('totalCostDisplay').textContent = 'R499';
+        document.getElementById('modalTotalAmount').textContent = '499';
+        document.getElementById('ozowAmount').textContent = '499';
+
+        // Package selection
+        function selectPackage(pkg, element) {
+            selectedPackage = pkg;
+            document.querySelectorAll('.package-inline').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            let price = 0;
+            if (pkg === 'basic') price = 169;
+            else if (pkg === 'standard') price = 329;
+            else if (pkg === 'premium') price = 499;
+            else price = 499; // custom - simplified for demo
+            
+            totalAmount = price;
+            document.getElementById('selectedPackageDisplay').textContent = pkg.charAt(0).toUpperCase() + pkg.slice(1);
+            document.getElementById('totalCostDisplay').textContent = 'R' + price;
+            document.getElementById('modalTotalAmount').textContent = price;
+            document.getElementById('ozowAmount').textContent = price;
+        }
+
+        // Modal functions
+        function openMoneyModal() {
+            document.getElementById('moneyModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMoneyModal() {
+            document.getElementById('moneyModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function openSuccessModal() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+            closeMoneyModal();
+            window.location.href = 'profile.html';
+        }
+
+        // Payment method
+        function setPaymentMethod(method, btn) {
+            currentPaymentMethod = method;
+            
+            // Update button states
+            document.querySelectorAll('.payment-method-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+            btn.classList.add('active');
+            
+            // Show/hide relevant sections
+            if (method === 'credit') {
+                document.getElementById('creditCardFields').style.display = 'block';
+                document.getElementById('ozowSection').style.display = 'none';
+            } else {
+                document.getElementById('creditCardFields').style.display = 'none';
+                document.getElementById('ozowSection').style.display = 'block';
+            }
+        }
+
+        // File upload simulation
+        function handleFileUpload(type, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Show loading on button
+            const btn = document.getElementById(type + 'UploadBtn');
+            btn.innerHTML = '⏳';
+            
+            setTimeout(() => {
+                uploadedFiles[type] = { name: file.name, uploaded: true };
+                
+                // Replace upload button with uploaded indicator
+                const actionsDiv = btn.parentElement;
+                actionsDiv.innerHTML = `
+                    <div class="uploaded-file">
+                        <span class="uploaded-icon">✅</span>
+                        <span>${file.name.substring(0, 10)}...</span>
+                        <button class="change-file-btn" onclick="resetFileUpload('${type}')">Change</button>
+                    </div>
+                `;
+                
+                // Hide any error
+                document.getElementById(type + 'Error').style.display = 'none';
+            }, 1000);
+        }
+
+        function resetFileUpload(type) {
+            uploadedFiles[type] = { name: null, uploaded: false };
+            
+            const actionsDiv = document.querySelector(`#${type}UploadBtn`).parentElement;
+            actionsDiv.innerHTML = `
+                <label class="upload-btn" id="${type}UploadBtn">
+                    📤
+                    <input type="file" id="${type}File" accept=".pdf,.jpg,.jpeg,.png" hidden onchange="handleFileUpload('${type}', this)">
+                </label>
+            `;
+        }
+
+        // Ozow payment simulation
+        function processOzowPayment() {
+            const btn = document.querySelector('.ozow-launch-btn');
+            btn.innerHTML = '⏳ Processing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '✅ Redirecting to Ozow...';
+                setTimeout(() => {
+                    // Simulate Ozow success
+                    simulatePaymentSuccess();
+                }, 1500);
+            }, 1000);
+        }
+
+        // Form validation
+        function validateForm() {
+            // Check required fields
+            const required = ['firstName', 'lastName', 'idNumber', 'dateOfBirth', 'gender', 'nationality', 
+                             'email', 'phoneNumber', 'whatsappNumber', 'address', 'city', 'province', 
+                             'postalCode', 'kinName', 'kinRelationship', 'kinPhone'];
+            
+            for (let field of required) {
+                const el = document.getElementById(field);
+                if (!el || !el.value || el.value.trim() === '') {
+                    showError(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                    return false;
+                }
+            }
+            
+            // Check email
+            const email = document.getElementById('email').value;
+            if (!email.includes('@') || !email.includes('.')) {
+                showError('Please enter a valid email address');
+                return false;
+            }
+            
+            // Check phone numbers (simple validation)
+            const phone = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+            if (phone.length < 10) {
+                showError('Please enter a valid phone number (at least 10 digits)');
+                return false;
+            }
+            
+            const whatsapp = document.getElementById('whatsappNumber').value.replace(/\D/g, '');
+            if (whatsapp.length < 10) {
+                showError('Please enter a valid WhatsApp number');
+                return false;
+            }
+            
+            // Check documents
+            if (!uploadedFiles.id.uploaded) {
+                document.getElementById('idError').style.display = 'block';
+                document.getElementById('idError').textContent = 'Please upload your ID document';
+                return false;
+            }
+            
+            if (!uploadedFiles.results.uploaded) {
+                document.getElementById('resultsError').style.display = 'block';
+                document.getElementById('resultsError').textContent = 'Please upload your Matric/Grade 11 results';
+                return false;
+            }
+            
+            // If credit card, validate card
+            if (currentPaymentMethod === 'credit') {
+                const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                if (cardNumber.length < 16) {
+                    showError('Please enter a valid 16-digit card number');
+                    return false;
+                }
+                
+                const cardName = document.getElementById('cardName').value;
+                if (!cardName || cardName.trim().length < 3) {
+                    showError('Please enter the name on card');
+                    return false;
+                }
+                
+                const expiry = document.getElementById('expiryDate').value;
+                if (expiry.length < 5 || !expiry.includes('/')) {
+                    showError('Please enter a valid expiry date (MM/YY)');
+                    return false;
+                }
+                
+                const cvc = document.getElementById('cvc').value;
+                if (cvc.length < 3) {
+                    showError('Please enter a valid CVC');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('moneyError');
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = message;
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Form submit
+        function handlePaymentSubmit(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) return;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '⏳ Processing...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                simulatePaymentSuccess();
+            }, 2000);
+        }
+
+        // Payment success simulation
+        function simulatePaymentSuccess() {
+            closeMoneyModal();
+            
+            // Show success modal
+            const successModal = document.getElementById('successModal');
+            successModal.style.display = 'flex';
+            
+            // Auto close after 3 seconds and redirect
+            setTimeout(() => {
+                successModal.style.display = 'none';
+                window.location.href = 'profile.html';
+            }, 3000);
+        }
+
+        // Courses modal (simplified)
+        function openCoursesModal() {
+            alert('Course selection modal would open here. In the full app, you can select individual courses for each university.');
+        }
+
+        // Format card number
+        document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+            if (value.length > 16) value = value.slice(0, 16);
+            
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += ' ';
+                formatted += value[i];
+            }
+            e.target.value = formatted;
+        });
+
+        // Format expiry
+        document.getElementById('expiryDate')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            
+            if (value.length > 2) {
+                e.target.value = value.slice(0, 2) + '/' + value.slice(2);
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Format CVC
+        document.getElementById('cvc')?.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+        });
+
+        // Close modals when clicking overlay
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('money-overlay')) {
+                if (e.target.id === 'moneyModal') closeMoneyModal();
+                if (e.target.id === 'successModal') closeSuccessModal();
+            }
+        });
+    </script>
+</body>
+</html>
